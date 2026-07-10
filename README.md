@@ -6,6 +6,8 @@ The app supports **single-file fitting**, **multi-file batch fitting**, and **fo
 
 ---
 
+Link to App: https://tafel-extrapolation-app.streamlit.app/
+
 ## ✨ Key Features
 
 ### 🔬 Electrochemical Analysis
