@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from textwrap import dedent
 
 import streamlit as st
 import pandas as pd
@@ -44,139 +43,135 @@ LOGO_PATH = ASSETS_DIR / "schaeffler_logo.png"
 # ============================================================
 
 def inject_global_css():
-    st.markdown(
-        dedent(
-            """
-            <style>
-            .block-container {
-                padding-top: 1.4rem;
-                padding-bottom: 3rem;
-                max-width: 1500px;
-            }
+    css = """
+<style>
+.block-container {
+    padding-top: 1.4rem;
+    padding-bottom: 3rem;
+    max-width: 1500px;
+}
 
-            section[data-testid="stSidebar"] {
-                background-color: #f4f6f8;
-                border-right: 1px solid #e1e5ea;
-            }
+section[data-testid="stSidebar"] {
+    background-color: #f4f6f8;
+    border-right: 1px solid #e1e5ea;
+}
 
-            section[data-testid="stSidebar"] h1,
-            section[data-testid="stSidebar"] h2,
-            section[data-testid="stSidebar"] h3 {
-                color: #1f2933;
-            }
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #1f2933;
+}
 
-            .hero-card {
-                padding: 2.0rem 2.3rem;
-                margin-top: 0.8rem;
-                margin-bottom: 1.5rem;
-                border-radius: 22px;
-                background:
-                    radial-gradient(circle at top right, rgba(0, 153, 76, 0.24), transparent 32%),
-                    linear-gradient(135deg, #050505 0%, #101820 52%, #004f2d 100%);
-                border: 1px solid rgba(0, 153, 76, 0.45);
-                box-shadow:
-                    0 16px 42px rgba(0, 0, 0, 0.25),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-            }
+.hero-card {
+    padding: 2.2rem 2.5rem;
+    margin-top: 0.9rem;
+    margin-bottom: 1.5rem;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at top right, rgba(0, 153, 76, 0.28), transparent 34%),
+        linear-gradient(135deg, #050505 0%, #101820 52%, #004f2d 100%);
+    border: 1px solid rgba(0, 153, 76, 0.45);
+    box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
 
-            .hero-kicker {
-                color: #8be0b3;
-                font-size: 0.82rem;
-                font-weight: 800;
-                letter-spacing: 0.16em;
-                text-transform: uppercase;
-                margin-bottom: 0.65rem;
-            }
+.hero-kicker {
+    color: #8be0b3;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
 
-            .hero-title {
-                color: #ffffff;
-                font-size: 2.75rem;
-                font-weight: 850;
-                letter-spacing: -0.04em;
-                line-height: 1.05;
-                margin-bottom: 0.85rem;
-            }
+.hero-title {
+    color: #ffffff;
+    font-size: 2.85rem;
+    font-weight: 850;
+    letter-spacing: -0.045em;
+    line-height: 1.05;
+    margin-bottom: 0.9rem;
+}
 
-            .hero-subtitle {
-                color: #d7e6dd;
-                font-size: 1.08rem;
-                line-height: 1.55;
-                max-width: 1120px;
-                margin-bottom: 1.0rem;
-            }
+.hero-subtitle {
+    color: #d7e6dd;
+    font-size: 1.08rem;
+    line-height: 1.58;
+    max-width: 1120px;
+    margin-bottom: 1.05rem;
+}
 
-            .hero-highlight {
-                color: #ffffff;
-                font-weight: 750;
-            }
+.hero-highlight {
+    color: #ffffff;
+    font-weight: 750;
+}
 
-            .badge-row {
-                display: flex;
-                gap: 0.55rem;
-                flex-wrap: wrap;
-                margin-top: 1.05rem;
-            }
+.badge-row {
+    display: flex;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    margin-top: 1.1rem;
+}
 
-            .hero-badge {
-                color: #ffffff;
-                background-color: rgba(0, 153, 76, 0.34);
-                border: 1px solid rgba(116, 230, 168, 0.58);
-                padding: 0.32rem 0.72rem;
-                border-radius: 999px;
-                font-size: 0.80rem;
-                font-weight: 700;
-            }
+.hero-badge {
+    color: #ffffff;
+    background-color: rgba(0, 153, 76, 0.36);
+    border: 1px solid rgba(116, 230, 168, 0.60);
+    padding: 0.34rem 0.76rem;
+    border-radius: 999px;
+    font-size: 0.80rem;
+    font-weight: 700;
+}
 
-            .intro-card {
-                padding: 1.25rem 1.35rem;
-                margin-bottom: 1.5rem;
-                border-radius: 16px;
-                background: #ffffff;
-                border: 1px solid #e6e9ee;
-                box-shadow: 0 4px 16px rgba(16, 24, 40, 0.06);
-            }
+.intro-card {
+    padding: 1.25rem 1.35rem;
+    margin-bottom: 1.5rem;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e6e9ee;
+    box-shadow: 0 4px 16px rgba(16, 24, 40, 0.06);
+}
 
-            .intro-card p {
-                margin-bottom: 0.7rem;
-                color: #1f2933;
-                font-size: 1.0rem;
-                line-height: 1.55;
-            }
+.intro-card p {
+    margin-bottom: 0.7rem;
+    color: #1f2933;
+    font-size: 1.0rem;
+    line-height: 1.55;
+}
 
-            .section-heading {
-                margin-top: 1.0rem;
-                margin-bottom: 0.5rem;
-                font-size: 1.35rem;
-                font-weight: 750;
-                color: #1f2933;
-            }
+.section-heading {
+    margin-top: 1.0rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.35rem;
+    font-weight: 750;
+    color: #1f2933;
+}
 
-            div[data-testid="stMetric"] {
-                background-color: #ffffff;
-                border: 1px solid #e6e9ee;
-                padding: 0.85rem 0.95rem;
-                border-radius: 14px;
-                box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05);
-            }
+div[data-testid="stMetric"] {
+    background-color: #ffffff;
+    border: 1px solid #e6e9ee;
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05);
+}
 
-            @media screen and (max-width: 900px) {
-                .hero-title {
-                    font-size: 2.0rem;
-                }
+@media screen and (max-width: 900px) {
+    .hero-title {
+        font-size: 2.0rem;
+    }
 
-                .hero-subtitle {
-                    font-size: 0.98rem;
-                }
+    .hero-subtitle {
+        font-size: 0.98rem;
+    }
 
-                .hero-card {
-                    padding: 1.55rem 1.45rem;
-                }
-            }
-            </style>
-            """
-        ),
-        unsafe_allow_html=True,
-    )
+    .hero-card {
+        padding: 1.55rem 1.45rem;
+    }
+}
+</style>
+"""
+    st.markdown(css, unsafe_allow_html=True)
 
 
 # ============================================================
@@ -186,74 +181,52 @@ def inject_global_css():
 def render_app_header():
     """
     Render a clean Schaeffler-branded application header.
+    This version avoids indented HTML so Streamlit does not render it as code.
 
     Logo location:
         assets/schaeffler_logo.png
     """
 
-    logo_left, logo_center, logo_right = st.columns([2.2, 1.2, 2.2])
+    logo_left, logo_center, logo_right = st.columns([2.4, 1.0, 2.4])
 
     with logo_center:
         if LOGO_PATH.exists():
             st.image(str(LOGO_PATH), use_container_width=True)
         else:
             st.markdown(
-                dedent(
-                    """
-                    <div style="
-                        text-align:center;
-                        color:#009944;
-                        font-size:2.1rem;
-                        font-weight:900;
-                        letter-spacing:0.06em;
-                        margin-bottom:0.7rem;
-                    ">
-                        SCHAEFFLER
-                    </div>
-                    """
-                ),
+                "<h2 style='text-align:center;color:#009944;font-weight:900;'>SCHAEFFLER</h2>",
                 unsafe_allow_html=True,
             )
 
-    st.markdown(
-        dedent(
-            """
-            <div class="hero-card">
-                <div class="hero-kicker">
-                    Schaeffler
-                </div>
-
-                <div class="hero-title">
-                    Electrochemical Analysis Platform
-                </div>
-
-                <div class="hero-subtitle">
-                    A professional analysis tool for
-                    <span class="hero-highlight">LSV polarization data</span>,
-                    Tafel extrapolation, corrosion parameter extraction,
-                    adaptive global fitting, passive/transpassive detection,
-                    and scalable batch evaluation.
-                </div>
-
-                <div class="badge-row">
-                    <span class="hero-badge">Anodic scans</span>
-                    <span class="hero-badge">Cathodic scans</span>
-                    <span class="hero-badge">Auto-detection</span>
-                    <span class="hero-badge">Classical Tafel</span>
-                    <span class="hero-badge">Global fitting</span>
-                    <span class="hero-badge">Hybrid workflow</span>
-                    <span class="hero-badge">Batch processing</span>
-                    <span class="hero-badge">Downloadable results</span>
-                </div>
-            </div>
-            """
-        ),
-        unsafe_allow_html=True,
+    hero_html = (
+        '<div class="hero-card">'
+        '<div class="hero-kicker">Schaeffler</div>'
+        '<div class="hero-title">Electrochemical Analysis Platform</div>'
+        '<div class="hero-subtitle">'
+        'A professional analysis tool for '
+        '<span class="hero-highlight">LSV polarization data</span>, '
+        'Tafel extrapolation, corrosion parameter extraction, '
+        'adaptive global fitting, passive/transpassive detection, '
+        'and scalable batch evaluation.'
+        '</div>'
+        '<div class="badge-row">'
+        '<span class="hero-badge">Anodic scans</span>'
+        '<span class="hero-badge">Cathodic scans</span>'
+        '<span class="hero-badge">Auto-detection</span>'
+        '<span class="hero-badge">Classical Tafel</span>'
+        '<span class="hero-badge">Global fitting</span>'
+        '<span class="hero-badge">Hybrid workflow</span>'
+        '<span class="hero-badge">Batch processing</span>'
+        '<span class="hero-badge">Downloadable results</span>'
+        '</div>'
+        '</div>'
     )
+
+    st.markdown(hero_html, unsafe_allow_html=True)
 
 
 # ============================================================
-# Helper functions
+# Helper Functions
 # ============================================================
 
 def render_result(result):
@@ -555,25 +528,21 @@ render_app_header()
 # Intro Section
 # ============================================================
 
-st.markdown(
-    dedent(
-        """
-        <div class="intro-card">
-            <p>
-                This application performs advanced Tafel extrapolation and global
-                polarization-curve fitting for electrochemical LSV data.
-            </p>
-
-            <p>
-                It supports anodic, cathodic, and automatically detected scan directions,
-                classical Tafel extrapolation, adaptive nonlinear global fitting,
-                passive/transpassive detection, and single-file or batch processing.
-            </p>
-        </div>
-        """
-    ),
-    unsafe_allow_html=True,
+intro_html = (
+    '<div class="intro-card">'
+    '<p>'
+    'This application performs advanced Tafel extrapolation and global '
+    'polarization-curve fitting for electrochemical LSV data.'
+    '</p>'
+    '<p>'
+    'It supports anodic, cathodic, and automatically detected scan directions, '
+    'classical Tafel extrapolation, adaptive nonlinear global fitting, '
+    'passive/transpassive detection, and single-file or batch processing.'
+    '</p>'
+    '</div>'
 )
+
+st.markdown(intro_html, unsafe_allow_html=True)
 
 
 # ============================================================
