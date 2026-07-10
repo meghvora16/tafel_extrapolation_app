@@ -1,5 +1,4 @@
 import json
-import base64
 from pathlib import Path
 
 import streamlit as st
@@ -35,14 +34,8 @@ LOGO_PATH = ASSETS_DIR / "schaeffler_logo.png"
 
 
 # ============================================================
-# Logo / Header Helpers
+# Logo / Header Helper
 # ============================================================
-
-def image_to_base64(image_path: Path) -> str:
-    with open(image_path, "rb") as image_file:
-        encoded = base64.b64encode(image_file.read()).decode("utf-8")
-    return encoded
-
 
 def render_app_header():
     """
@@ -58,10 +51,9 @@ def render_app_header():
             padding-top: 1.2rem;
         }
 
-        .schaeffler-header {
-            width: 100%;
-            padding: 1.25rem 1.55rem;
-            margin-bottom: 1.5rem;
+        .header-card {
+            padding: 1.35rem 1.5rem;
+            margin-bottom: 1.4rem;
             border-radius: 18px;
             background: linear-gradient(
                 90deg,
@@ -73,53 +65,29 @@ def render_app_header():
             box-shadow: 0 8px 28px rgba(0, 0, 0, 0.24);
         }
 
-        .schaeffler-header-inner {
-            display: flex;
-            align-items: center;
-            gap: 2.0rem;
-        }
-
-        .schaeffler-logo-box {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .schaeffler-logo {
-            width: 270px;
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .schaeffler-title-box {
-            flex: 1;
-        }
-
-        .schaeffler-title {
+        .header-title {
             color: #ffffff;
-            font-size: 2.15rem;
+            font-size: 2.05rem;
             font-weight: 750;
             line-height: 1.15;
             margin-bottom: 0.35rem;
         }
 
-        .schaeffler-subtitle {
+        .header-subtitle {
             color: #d7e6dd;
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             line-height: 1.45;
             max-width: 1150px;
         }
 
-        .schaeffler-badge-row {
+        .badge-row {
             margin-top: 0.70rem;
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
 
-        .schaeffler-badge {
+        .badge {
             color: #ffffff;
             background-color: rgba(0, 153, 76, 0.35);
             border: 1px solid rgba(0, 153, 76, 0.80);
@@ -128,82 +96,60 @@ def render_app_header():
             font-size: 0.78rem;
             font-weight: 600;
         }
-
-        @media screen and (max-width: 900px) {
-            .schaeffler-header-inner {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .schaeffler-logo {
-                width: 220px;
-            }
-
-            .schaeffler-title {
-                font-size: 1.65rem;
-            }
-        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    if LOGO_PATH.exists():
-        logo_b64 = image_to_base64(LOGO_PATH)
-        logo_html = f"""
-        <img
-            src="data:image/png;base64,{logo_b64}"
-            class="schaeffler-logo"
-            alt="Schaeffler Logo"
-        >
-        """
-    else:
-        logo_html = """
-        <div style="
-            color:#00a651;
-            font-size:2.0rem;
-            font-weight:850;
-            letter-spacing:0.06em;
-        ">
-            SCHAEFFLER
-        </div>
-        """
+    st.markdown('<div class="header-card">', unsafe_allow_html=True)
 
-    st.markdown(
-        f"""
-        <div class="schaeffler-header">
-            <div class="schaeffler-header-inner">
-                <div class="schaeffler-logo-box">
-                    {logo_html}
+    logo_col, title_col = st.columns([1.25, 4.75])
+
+    with logo_col:
+        if LOGO_PATH.exists():
+            st.image(str(LOGO_PATH), width=260)
+        else:
+            st.markdown(
+                """
+                <div style="
+                    color:#00a651;
+                    font-size:2.0rem;
+                    font-weight:850;
+                    letter-spacing:0.06em;
+                ">
+                    SCHAEFFLER
                 </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-                <div class="schaeffler-title-box">
-                    <div class="schaeffler-title">
-                        Advanced Tafel Extrapolation and Polarization Fitting App
-                    </div>
-
-                    <div class="schaeffler-subtitle">
-                        Schaeffler electrochemical analysis tool for Tafel extrapolation,
-                        adaptive nonlinear polarization-curve fitting,
-                        passive/transpassive detection, and batch evaluation of LSV data.
-                    </div>
-
-                    <div class="schaeffler-badge-row">
-                        <span class="schaeffler-badge">Anodic</span>
-                        <span class="schaeffler-badge">Cathodic</span>
-                        <span class="schaeffler-badge">Auto-detect</span>
-                        <span class="schaeffler-badge">Classical Tafel</span>
-                        <span class="schaeffler-badge">Global Fit</span>
-                        <span class="schaeffler-badge">Hybrid Model</span>
-                        <span class="schaeffler-badge">Batch Processing</span>
-                    </div>
-                </div>
+    with title_col:
+        st.markdown(
+            """
+            <div class="header-title">
+                Advanced Tafel Extrapolation and Polarization Fitting App
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+
+            <div class="header-subtitle">
+                Schaeffler electrochemical analysis tool for Tafel extrapolation,
+                adaptive nonlinear polarization-curve fitting,
+                passive/transpassive detection, and batch evaluation of LSV data.
+            </div>
+
+            <div class="badge-row">
+                <span class="badge">Anodic</span>
+                <span class="badge">Cathodic</span>
+                <span class="badge">Auto-detect</span>
+                <span class="badge">Classical Tafel</span>
+                <span class="badge">Global Fit</span>
+                <span class="badge">Hybrid Model</span>
+                <span class="badge">Batch Processing</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ============================================================
@@ -305,10 +251,9 @@ def render_result(result):
 
 
 # ============================================================
-# Sidebar and Header
+# Sidebar
 # ============================================================
 
-# Sidebar logo
 if LOGO_PATH.exists():
     st.sidebar.image(str(LOGO_PATH), use_container_width=True)
 
@@ -495,7 +440,10 @@ dark_theme = st.sidebar.checkbox("Dark theme", value=True)
 st.session_state["dark_theme"] = dark_theme
 
 
-# Render main Schaeffler-branded header after sidebar settings exist
+# ============================================================
+# Main Header
+# ============================================================
+
 render_app_header()
 
 st.markdown(
@@ -514,6 +462,10 @@ Supported features include:
 """
 )
 
+
+# ============================================================
+# Configuration
+# ============================================================
 
 config = TafelConfig(
     potential_col=potential_col,
