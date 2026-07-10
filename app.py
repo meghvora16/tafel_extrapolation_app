@@ -200,7 +200,6 @@ def render_app_header():
 
     hero_html = (
         '<div class="hero-card">'
-        '<div class="hero-kicker">Schaeffler</div>'
         '<div class="hero-title">Electrochemical Analysis Platform</div>'
         '<div class="hero-subtitle">'
         'A professional analysis tool for '
