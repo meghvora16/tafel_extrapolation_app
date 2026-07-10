@@ -17,10 +17,15 @@ from tafel_core.plotting import create_interactive_plot
 from tafel_core.validation import generate_quality_flags
 
 
+# ============================================================
+# Page Config
+# ============================================================
+
 st.set_page_config(
     page_title="Advanced Tafel Extrapolation App",
     page_icon="📈",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 
@@ -34,88 +39,174 @@ LOGO_PATH = ASSETS_DIR / "schaeffler_logo.png"
 
 
 # ============================================================
-# Logo / Header Helper
+# Global Styling
 # ============================================================
 
-def render_app_header():
-    """
-    Render Schaeffler-branded application header.
-    The logo file should be located at:
-        assets/schaeffler_logo.png
-    """
-
+def inject_global_css():
     st.markdown(
         """
         <style>
+        /* Main app spacing */
         .block-container {
-            padding-top: 1.2rem;
+            padding-top: 1.4rem;
+            padding-bottom: 3rem;
+            max-width: 1500px;
         }
 
-        .header-card {
-            padding: 1.35rem 1.5rem;
-            margin-bottom: 1.4rem;
-            border-radius: 18px;
-            background: linear-gradient(
-                90deg,
-                #050505 0%,
-                #101820 48%,
-                #004f2d 100%
-            );
-            border: 1px solid rgba(0, 153, 76, 0.35);
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.24);
+        /* Sidebar polish */
+        section[data-testid="stSidebar"] {
+            background-color: #f4f6f8;
+            border-right: 1px solid #e1e5ea;
         }
 
-        .header-title {
+        section[data-testid="stSidebar"] h1,
+        section[data-testid="stSidebar"] h2,
+        section[data-testid="stSidebar"] h3 {
+            color: #1f2933;
+        }
+
+        /* Hero card */
+        .hero-card {
+            padding: 2.1rem 2.3rem 2.0rem 2.3rem;
+            margin-top: 0.6rem;
+            margin-bottom: 1.6rem;
+            border-radius: 22px;
+            background:
+                radial-gradient(circle at top right, rgba(0, 153, 76, 0.26), transparent 30%),
+                linear-gradient(135deg, #050505 0%, #101820 48%, #004f2d 100%);
+            border: 1px solid rgba(0, 153, 76, 0.45);
+            box-shadow:
+                0 16px 42px rgba(0, 0, 0, 0.26),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-kicker {
+            color: #8be0b3;
+            font-size: 0.84rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 0.65rem;
+        }
+
+        .hero-title {
             color: #ffffff;
-            font-size: 2.05rem;
-            font-weight: 750;
-            line-height: 1.15;
-            margin-bottom: 0.35rem;
+            font-size: 2.55rem;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: 1.08;
+            max-width: 1100px;
+            margin-bottom: 0.8rem;
         }
 
-        .header-subtitle {
+        .hero-subtitle {
             color: #d7e6dd;
-            font-size: 1.02rem;
-            line-height: 1.45;
-            max-width: 1150px;
+            font-size: 1.08rem;
+            line-height: 1.55;
+            max-width: 1120px;
+            margin-bottom: 1.0rem;
+        }
+
+        .hero-highlight {
+            color: #ffffff;
+            font-weight: 700;
         }
 
         .badge-row {
-            margin-top: 0.70rem;
             display: flex;
-            gap: 0.5rem;
+            gap: 0.55rem;
             flex-wrap: wrap;
+            margin-top: 1.05rem;
         }
 
-        .badge {
+        .hero-badge {
             color: #ffffff;
-            background-color: rgba(0, 153, 76, 0.35);
-            border: 1px solid rgba(0, 153, 76, 0.80);
-            padding: 0.23rem 0.58rem;
+            background-color: rgba(0, 153, 76, 0.34);
+            border: 1px solid rgba(116, 230, 168, 0.58);
+            padding: 0.32rem 0.70rem;
             border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 600;
+            font-size: 0.80rem;
+            font-weight: 700;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .intro-card {
+            padding: 1.25rem 1.35rem;
+            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            background: #ffffff;
+            border: 1px solid #e6e9ee;
+            box-shadow: 0 4px 16px rgba(16, 24, 40, 0.06);
+        }
+
+        .intro-card p {
+            margin-bottom: 0.7rem;
+        }
+
+        .section-heading {
+            margin-top: 1.0rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.35rem;
+            font-weight: 750;
+            color: #1f2933;
+        }
+
+        /* Metrics slight polish */
+        div[data-testid="stMetric"] {
+            background-color: #ffffff;
+            border: 1px solid #e6e9ee;
+            padding: 0.85rem 0.95rem;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05);
+        }
+
+        @media screen and (max-width: 900px) {
+            .hero-title {
+                font-size: 1.95rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.98rem;
+            }
+
+            .hero-card {
+                padding: 1.55rem 1.45rem;
+            }
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="header-card">', unsafe_allow_html=True)
 
-    logo_col, title_col = st.columns([1.25, 4.75])
+# ============================================================
+# Header Helper
+# ============================================================
 
-    with logo_col:
+def render_app_header():
+    """
+    Render a clean Schaeffler-branded application header.
+
+    Logo location:
+        assets/schaeffler_logo.png
+    """
+
+    # Logo row — centered, clean, outside HTML to avoid Streamlit rendering issues
+    logo_left, logo_center, logo_right = st.columns([2.2, 1.2, 2.2])
+
+    with logo_center:
         if LOGO_PATH.exists():
-            st.image(str(LOGO_PATH), width=260)
+            st.image(str(LOGO_PATH), use_container_width=True)
         else:
             st.markdown(
                 """
                 <div style="
-                    color:#00a651;
-                    font-size:2.0rem;
-                    font-weight:850;
+                    text-align:center;
+                    color:#009944;
+                    font-size:2.1rem;
+                    font-weight:900;
                     letter-spacing:0.06em;
+                    margin-bottom:0.7rem;
                 ">
                     SCHAEFFLER
                 </div>
@@ -123,33 +214,38 @@ def render_app_header():
                 unsafe_allow_html=True,
             )
 
-    with title_col:
-        st.markdown(
-            """
-            <div class="header-title">
-                Advanced Tafel Extrapolation and Polarization Fitting App
+    st.markdown(
+        """
+        <div class="hero-card">
+            <div class="hero-kicker">
+                Schaeffler Electrochemical Analysis Platform
             </div>
 
-            <div class="header-subtitle">
-                Schaeffler electrochemical analysis tool for Tafel extrapolation,
-                adaptive nonlinear polarization-curve fitting,
-                passive/transpassive detection, and batch evaluation of LSV data.
+            <div class="hero-title">
+                Advanced Tafel Extrapolation & Polarization Curve Fitting
+            </div>
+
+            <div class="hero-subtitle">
+                A professional analysis tool for
+                <span class="hero-highlight">LSV polarization data</span>,
+                corrosion parameter extraction, adaptive global fitting,
+                passive/transpassive detection, and scalable batch evaluation.
             </div>
 
             <div class="badge-row">
-                <span class="badge">Anodic</span>
-                <span class="badge">Cathodic</span>
-                <span class="badge">Auto-detect</span>
-                <span class="badge">Classical Tafel</span>
-                <span class="badge">Global Fit</span>
-                <span class="badge">Hybrid Model</span>
-                <span class="badge">Batch Processing</span>
+                <span class="hero-badge">Anodic scans</span>
+                <span class="hero-badge">Cathodic scans</span>
+                <span class="hero-badge">Auto-detection</span>
+                <span class="hero-badge">Classical Tafel</span>
+                <span class="hero-badge">Global fitting</span>
+                <span class="hero-badge">Hybrid workflow</span>
+                <span class="hero-badge">Batch processing</span>
+                <span class="hero-badge">Downloadable reports</span>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ============================================================
@@ -251,11 +347,18 @@ def render_result(result):
 
 
 # ============================================================
+# Inject CSS
+# ============================================================
+
+inject_global_css()
+
+
+# ============================================================
 # Sidebar
 # ============================================================
 
-if LOGO_PATH.exists():
-    st.sidebar.image(str(LOGO_PATH), use_container_width=True)
+# Important:
+# The logo has intentionally been removed from the sidebar.
 
 st.sidebar.header("⚙️ Main Settings")
 
@@ -446,20 +549,27 @@ st.session_state["dark_theme"] = dark_theme
 
 render_app_header()
 
+
+# ============================================================
+# Intro Section
+# ============================================================
+
 st.markdown(
     """
-This application performs advanced Tafel extrapolation and global polarization-curve fitting for electrochemical LSV data.
+    <div class="intro-card">
+        <p>
+            This application performs advanced Tafel extrapolation and global
+            polarization-curve fitting for electrochemical LSV data.
+        </p>
 
-Supported features include:
-
-- anodic, cathodic, and auto-detected scan direction  
-- classical Tafel extrapolation  
-- adaptive nonlinear global fitting  
-- hybrid fitting  
-- passive and transpassive detection  
-- single-file and batch processing  
-- downloadable processed data, dense fit curves, summaries, and diagnostics  
-"""
+        <p>
+            It supports anodic, cathodic, and automatically detected scan directions,
+            classical Tafel extrapolation, adaptive nonlinear global fitting,
+            passive/transpassive detection, and single-file or batch processing.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 
@@ -498,8 +608,10 @@ fitter = TafelFitter(config)
 # ============================================================
 
 if processing_label == "Single uploaded file":
+    st.markdown('<div class="section-heading">📤 Single File Analysis</div>', unsafe_allow_html=True)
+
     uploaded_file = st.file_uploader(
-        "📤 Upload one LSV file",
+        "Upload one LSV file",
         type=["xlsx", "xls", "csv"],
         accept_multiple_files=False,
     )
@@ -530,8 +642,10 @@ if processing_label == "Single uploaded file":
 
 
 elif processing_label == "Multiple uploaded files":
+    st.markdown('<div class="section-heading">📤 Uploaded Batch Analysis</div>', unsafe_allow_html=True)
+
     uploaded_files = st.file_uploader(
-        "📤 Upload multiple LSV files",
+        "Upload multiple LSV files",
         type=["xlsx", "xls", "csv"],
         accept_multiple_files=True,
     )
@@ -595,6 +709,8 @@ elif processing_label == "Multiple uploaded files":
 
 
 elif processing_label == "Batch folder":
+    st.markdown('<div class="section-heading">📁 Folder Batch Analysis</div>', unsafe_allow_html=True)
+
     st.warning(
         "Batch folder mode works only when Streamlit has access to the local or network folder path."
     )
