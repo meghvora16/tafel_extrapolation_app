@@ -1,4 +1,5 @@
 import json
+import base64
 from pathlib import Path
 
 import streamlit as st
@@ -22,6 +23,187 @@ st.set_page_config(
     page_icon="📈",
     layout="wide",
 )
+
+
+# ============================================================
+# Logo / Asset Paths
+# ============================================================
+
+APP_DIR = Path(__file__).resolve().parent
+ASSETS_DIR = APP_DIR / "assets"
+LOGO_PATH = ASSETS_DIR / "schaeffler_logo.png"
+
+
+# ============================================================
+# Logo / Header Helpers
+# ============================================================
+
+def image_to_base64(image_path: Path) -> str:
+    with open(image_path, "rb") as image_file:
+        encoded = base64.b64encode(image_file.read()).decode("utf-8")
+    return encoded
+
+
+def render_app_header():
+    """
+    Render Schaeffler-branded application header.
+    The logo file should be located at:
+        assets/schaeffler_logo.png
+    """
+
+    st.markdown(
+        """
+        <style>
+        .block-container {
+            padding-top: 1.2rem;
+        }
+
+        .schaeffler-header {
+            width: 100%;
+            padding: 1.25rem 1.55rem;
+            margin-bottom: 1.5rem;
+            border-radius: 18px;
+            background: linear-gradient(
+                90deg,
+                #050505 0%,
+                #101820 48%,
+                #004f2d 100%
+            );
+            border: 1px solid rgba(0, 153, 76, 0.35);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.24);
+        }
+
+        .schaeffler-header-inner {
+            display: flex;
+            align-items: center;
+            gap: 2.0rem;
+        }
+
+        .schaeffler-logo-box {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .schaeffler-logo {
+            width: 270px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .schaeffler-title-box {
+            flex: 1;
+        }
+
+        .schaeffler-title {
+            color: #ffffff;
+            font-size: 2.15rem;
+            font-weight: 750;
+            line-height: 1.15;
+            margin-bottom: 0.35rem;
+        }
+
+        .schaeffler-subtitle {
+            color: #d7e6dd;
+            font-size: 1.05rem;
+            line-height: 1.45;
+            max-width: 1150px;
+        }
+
+        .schaeffler-badge-row {
+            margin-top: 0.70rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .schaeffler-badge {
+            color: #ffffff;
+            background-color: rgba(0, 153, 76, 0.35);
+            border: 1px solid rgba(0, 153, 76, 0.80);
+            padding: 0.23rem 0.58rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        @media screen and (max-width: 900px) {
+            .schaeffler-header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .schaeffler-logo {
+                width: 220px;
+            }
+
+            .schaeffler-title {
+                font-size: 1.65rem;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if LOGO_PATH.exists():
+        logo_b64 = image_to_base64(LOGO_PATH)
+        logo_html = f"""
+        <img
+            src="data:image/png;base64,{logo_b64}"
+            class="schaeffler-logo"
+            alt="Schaeffler Logo"
+        >
+        """
+    else:
+        logo_html = """
+        <div style="
+            color:#00a651;
+            font-size:2.0rem;
+            font-weight:850;
+            letter-spacing:0.06em;
+        ">
+            SCHAEFFLER
+        </div>
+        """
+
+    st.markdown(
+        f"""
+        <div class="schaeffler-header">
+            <div class="schaeffler-header-inner">
+                <div class="schaeffler-logo-box">
+                    {logo_html}
+                </div>
+
+                <div class="schaeffler-title-box">
+                    <div class="schaeffler-title">
+                        Advanced Tafel Extrapolation and Polarization Fitting App
+                    </div>
+
+                    <div class="schaeffler-subtitle">
+                        Schaeffler electrochemical analysis tool for Tafel extrapolation,
+                        adaptive nonlinear polarization-curve fitting,
+                        passive/transpassive detection, and batch evaluation of LSV data.
+                    </div>
+
+                    <div class="schaeffler-badge-row">
+                        <span class="schaeffler-badge">Anodic</span>
+                        <span class="schaeffler-badge">Cathodic</span>
+                        <span class="schaeffler-badge">Auto-detect</span>
+                        <span class="schaeffler-badge">Classical Tafel</span>
+                        <span class="schaeffler-badge">Global Fit</span>
+                        <span class="schaeffler-badge">Hybrid Model</span>
+                        <span class="schaeffler-badge">Batch Processing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ============================================================
@@ -123,26 +305,12 @@ def render_result(result):
 
 
 # ============================================================
-# Sidebar
+# Sidebar and Header
 # ============================================================
 
-st.title("📈 Advanced Tafel Extrapolation and Polarization Fitting App")
-
-st.markdown(
-    """
-This application performs advanced Tafel extrapolation and global polarization-curve fitting for electrochemical LSV data.
-
-Supported features include:
-
-- anodic, cathodic, and auto-detected scan direction  
-- classical Tafel extrapolation  
-- adaptive nonlinear global fitting  
-- hybrid fitting  
-- passive and transpassive detection  
-- single-file and batch processing  
-- downloadable processed data, dense fit curves, summaries, and diagnostics  
-"""
-)
+# Sidebar logo
+if LOGO_PATH.exists():
+    st.sidebar.image(str(LOGO_PATH), use_container_width=True)
 
 st.sidebar.header("⚙️ Main Settings")
 
@@ -325,6 +493,27 @@ st.sidebar.subheader("🎨 Plot Settings")
 
 dark_theme = st.sidebar.checkbox("Dark theme", value=True)
 st.session_state["dark_theme"] = dark_theme
+
+
+# Render main Schaeffler-branded header after sidebar settings exist
+render_app_header()
+
+st.markdown(
+    """
+This application performs advanced Tafel extrapolation and global polarization-curve fitting for electrochemical LSV data.
+
+Supported features include:
+
+- anodic, cathodic, and auto-detected scan direction  
+- classical Tafel extrapolation  
+- adaptive nonlinear global fitting  
+- hybrid fitting  
+- passive and transpassive detection  
+- single-file and batch processing  
+- downloadable processed data, dense fit curves, summaries, and diagnostics  
+"""
+)
+
 
 config = TafelConfig(
     potential_col=potential_col,
