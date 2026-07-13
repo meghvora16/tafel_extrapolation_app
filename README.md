@@ -853,14 +853,6 @@ Version: 0.1.0
 
 Developed for advanced electrochemical polarization analysis and Tafel extrapolation workflows.
 
-Recommended ownership:
-
-```text
-Data Science / Electrochemistry / Materials Engineering
-```
-
----
-
 ## ⚠️ Disclaimer
 
 This app provides computational support for Tafel extrapolation and polarization-curve fitting. Results must be interpreted by qualified users with electrochemical expertise.
